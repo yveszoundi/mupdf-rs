@@ -227,8 +227,12 @@ impl Pixmap {
         Ok(io::copy(&mut buf, w)?)
     }
 
-    pub fn get_image_buffer(&self, format: ImageFormat) -> Result<Buffer, Error> {
-        self.get_image_data(format)
+    pub fn get_image_bytes(&self, format: ImageFormat) -> Result<Vec<u8>, Error> {
+        let mut buf = self.get_image_data(format)?;
+        let mut buffer: Vec<u8> = Vec::with_capacity(buf.len());
+        io::copy(&mut buf, &mut buffer)?;
+
+        Ok(buffer)
     }
 
     pub fn try_clone(&self) -> Result<Self, Error> {
