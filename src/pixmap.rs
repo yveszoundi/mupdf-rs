@@ -1,5 +1,5 @@
 use std::ffi::CString;
-use std::io::{self, Write};
+use std::io::{self, Read, Write};
 use std::slice;
 
 use mupdf_sys::*;
@@ -225,6 +225,11 @@ impl Pixmap {
     pub fn write_to<W: Write>(&self, w: &mut W, format: ImageFormat) -> Result<u64, Error> {
         let mut buf = self.get_image_data(format)?;
         Ok(io::copy(&mut buf, w)?)
+    }
+
+    pub fn get_image_bytes(&self, format: ImageFormat) -> Result<std::io::Bytes<Buffer>, Error> {
+        let buf = self.get_image_data(format)?;
+        Ok(buf.bytes())
     }
 
     pub fn try_clone(&self) -> Result<Self, Error> {
